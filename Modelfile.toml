@@ -1,11 +1,11 @@
 name = "dicepy"
 run = "docker run --rm -v \"$PWD/run:/run\" ${IMAGE} ${ARGS} > run/dicepy_output.json"
 image = "dicepy-runner:local"
-args = ["{input:dicepy_input}"]
+args = ["{input:fair_data}"]
 
 [[inputs]]
 # TODO: this should eventually support URLs as well as local files
-name = "dicepy_input"
+name = "fair_data"
 
 [inputs.schema]
 type = "object"
