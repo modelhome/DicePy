@@ -1,0 +1,82 @@
+name = "dicepy"
+run = "docker run --rm -v \"$PWD/run:/run\" ${IMAGE} ${ARGS} > run/dicepy_output.json"
+image = "dicepy-runner:local"
+args = ["{input:dicepy_input}"]
+
+[[inputs]]
+# TODO: this should eventually support URLs as well as local files
+name = "dicepy_input"
+
+[inputs.schema]
+type = "object"
+# timebounds / scenarios / configs / temperature_K mirror the FaIR output schema
+required = ["timebounds", "scenarios", "configs", "temperature_K"]
+
+[inputs.schema.properties.timebounds]
+type = "array"
+items = { type = "integer" }
+description = "Calendar years, echoed from FaIR output"
+
+[inputs.schema.properties.scenarios]
+type = "array"
+items = { type = "string" }
+description = "Scenario labels, echoed from FaIR output"
+
+[inputs.schema.properties.configs]
+type = "array"
+items = { type = "string" }
+description = "Config labels, echoed from FaIR output"
+
+[inputs.schema.properties.temperature_K]
+type = "object"
+description = "Surface temperature anomaly (K) — {scenario: {config: [float, ...]}}. Echoed from FaIR temperature_K output."
+
+[inputs.schema.properties.bond_horizon_end]
+type = "integer"
+description = "Bond maturity year; damages are averaged up to this year (default: last timebounds year)"
+
+[inputs.schema.properties.temperature_offset_K]
+type = "number"
+description = "Shift added to each FaIR temperature value before evaluating the damage function. Converts anomaly-from-run-start to anomaly-from-pre-industrial. (default: 0.7)"
+
+[inputs.schema.properties.baseline_ytm]
+type = "number"
+description = "Baseline yield-to-maturity (decimal, e.g. 0.04 = 4%). If provided, adjusted_ytm is included in the output."
+
+[[outputs]]
+name = "dicepy_output"
+
+[outputs.schema]
+type = "object"
+required = ["scenarios", "configs", "timebounds", "damage_fraction", "horizon_mean_damage", "climate_risk_premium"]
+
+[outputs.schema.properties.scenarios]
+type = "array"
+items = { type = "string" }
+description = "Echoed from input"
+
+[outputs.schema.properties.configs]
+type = "array"
+items = { type = "string" }
+description = "Echoed from input"
+
+[outputs.schema.properties.timebounds]
+type = "array"
+items = { type = "integer" }
+description = "Years clipped to [first timebounds year, bond_horizon_end]"
+
+[outputs.schema.properties.damage_fraction]
+type = "object"
+description = "DICE DAMFRAC per year — fractional GDP loss. {scenario: {config: [float, ...]}}"
+
+[outputs.schema.properties.horizon_mean_damage]
+type = "object"
+description = "Mean annual damage fraction over the bond horizon. {scenario: {config: float}}"
+
+[outputs.schema.properties.climate_risk_premium]
+type = "object"
+description = "Decimal yield spread to add to baseline YTM (equals horizon_mean_damage). {scenario: {config: float}}"
+
+[outputs.schema.properties.adjusted_ytm]
+type = "object"
+description = "baseline_ytm + climate_risk_premium. Only present when baseline_ytm is supplied. {scenario: {config: float}}"
