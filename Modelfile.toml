@@ -1,11 +1,11 @@
 name = "dicepy"
-run = "docker run --rm -v \"$PWD/run:/run\" ${IMAGE} ${ARGS} > run/dicepy_output.json"
+run = "docker run --rm -v \"$PWD/run:/run\" ${IMAGE} ${ARGS} > run/damage_estimates.output.json"
 image = "dicepy-runner:local"
-args = ["{input:fair_data}"]
+args = ["{input:climate_projections}"]
 
 [[inputs]]
 # TODO: this should eventually support URLs as well as local files
-name = "fair_data"
+name = "climate_projections"
 
 [inputs.schema]
 type = "object"
@@ -44,7 +44,7 @@ type = "number"
 description = "Baseline yield-to-maturity (decimal, e.g. 0.04 = 4%). If provided, adjusted_ytm is included in the output."
 
 [[outputs]]
-name = "dicepy_output"
+name = "damage_estimates"
 
 [outputs.schema]
 type = "object"
