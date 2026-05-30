@@ -1,4 +1,5 @@
-name = "dicepy"
+name = "Climate Damage Premium"
+description = "Runs the DICE integrated assessment model on climate projections to estimate the economic damage from warming, expressed as a climate risk premium — a yield spread above the risk-free rate. Sits between Emissions Climate Projection (FaIR) and a bond pricer (Climate Bond Pricer / Curve Bond Pricer)."
 run = "docker run --rm -v \"$PWD/run:/run\" ${IMAGE} ${ARGS} > run/damage_estimates.output.json"
 image = "dicepy-runner:local"
 args = ["{input:climate_projections}"]
